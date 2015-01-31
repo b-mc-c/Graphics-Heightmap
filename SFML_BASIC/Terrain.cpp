@@ -1,7 +1,34 @@
+//////////////////////////////////////////////////////////// 
+// Headers 
+//////////////////////////////////////////////////////////// 
+#include "stdafx.h" 
+#ifdef _DEBUG 
+#pragma comment(lib,"sfml-graphics-d.lib") 
+#pragma comment(lib,"sfml-audio-d.lib") 
+#pragma comment(lib,"sfml-system-d.lib") 
+#pragma comment(lib,"sfml-window-d.lib") 
+#pragma comment(lib,"sfml-network-d.lib") 
+#else 
+#pragma comment(lib,"sfml-graphics.lib") 
+#pragma comment(lib,"sfml-audio.lib") 
+#pragma comment(lib,"sfml-system.lib") 
+#pragma comment(lib,"sfml-window.lib") 
+#pragma comment(lib,"sfml-network.lib") 
+#endif 
+#pragma comment(lib,"opengl32.lib") 
+#pragma comment(lib,"glu32.lib") 
+ 
+#include "SFML/Graphics.hpp" 
+#include "SFML/Graphics/Shader.hpp"
+#include "SFML/OpenGL.hpp" 
+
 #include "stdafx.h"
 #include "SFML/OpenGL.hpp"
 #include "Terrain.h"
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 Terrain::Terrain(void)
 {
@@ -64,8 +91,12 @@ void Terrain::Init(){
 	vertices=new vector[numVerts];
 	delete [] colors;
 	colors=new vector[numVerts];
-
-
+	if (!m_heightmap.loadFromFile("heightmap.png"))
+	{
+		cout << "image not loaded " << endl;
+	}
+	
+	
 	//interpolate along the edges to generate interior points
 	for(int i=0;i<gridWidth-1;i++){ //iterate left to right
 		for(int j=0;j<gridDepth-1;j++){//iterate front to back
@@ -75,6 +106,9 @@ void Terrain::Init(){
 			float back =lerp(-terrDepth/2,terrDepth/2,(float)(j+1)/gridDepth);
 			float left=lerp(-terrWidth/2,terrWidth/2,(float)i/gridDepth);
 			float right=lerp(-terrDepth/2,terrDepth/2,(float)(i+1)/gridDepth);
+			int mapWidth = m_heightmap.getSize().x;
+			int mapHeight = m_heightmap.getSize().y;
+			sf::Color leftcol = m_heightmap.getPixel(i * mapWidth / gridWidth ,j * mapHeight / gridDepth);
 			
 			/*
 			back   +-----+	looking from above, the grid is made up of regular squares
@@ -87,36 +121,31 @@ void Terrain::Init(){
 			     left   right
 				 */
 			//tri1
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],left,getHeight(left,front),front);
 
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
-			setPoint(vertices[vertexNum++],left,getHeight(left,back),back);
 
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
-			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
 
-			//tri2
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
-			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
-
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
-			setPoint(vertices[vertexNum++],left,getHeight(left,front),front);
-
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],right,getHeight(right,front),front);
+
+			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
+			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
 
 
 			//declare a degenerate triangle
 			//TODO: fix this to draw the correct triangle
-			setPoint(colors[vertexNum],0,0,0);
-			setPoint(vertices[vertexNum++],0,0,0);
-			setPoint(colors[vertexNum],0,0,0);
-			setPoint(vertices[vertexNum++],0,0,0);
-			setPoint(colors[vertexNum],0,0,0);
-			setPoint(vertices[vertexNum++],0,0,0);
+			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
+			setPoint(vertices[vertexNum++],left,getHeight(left,front),front);
 
+			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
+			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
 
+			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
+			setPoint(vertices[vertexNum++],left,getHeight(left,back),back);
+			
+
+			
 
 
 		}

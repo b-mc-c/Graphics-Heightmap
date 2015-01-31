@@ -84,6 +84,9 @@ float  Terrain::getHeight(float x, float y){
 
 	return dist;
 }
+float  Terrain::getHeight2(float y){
+	return y / 20;
+}
 
 void Terrain::Init(){
 	
@@ -96,7 +99,7 @@ void Terrain::Init(){
 		cout << "image not loaded " << endl;
 	}
 	
-	
+
 	//interpolate along the edges to generate interior points
 	for(int i=0;i<gridWidth-1;i++){ //iterate left to right
 		for(int j=0;j<gridDepth-1;j++){//iterate front to back
@@ -108,8 +111,14 @@ void Terrain::Init(){
 			float right=lerp(-terrDepth/2,terrDepth/2,(float)(i+1)/gridDepth);
 			int mapWidth = m_heightmap.getSize().x;
 			int mapHeight = m_heightmap.getSize().y;
-			sf::Color leftcol = m_heightmap.getPixel(i * mapWidth / gridWidth ,j * mapHeight / gridDepth);
-			
+			sf::Color frontleftcol  = m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j ) * mapHeight / gridDepth);
+			sf::Color frontrightcol = m_heightmap.getPixel((i +1 ) * mapWidth / gridWidth ,(j) * mapHeight / gridDepth);
+			sf::Color backleftcol= m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j + 1) * mapHeight / gridDepth);
+			sf::Color  backrightcol= m_heightmap.getPixel((i + 1 ) * mapWidth / gridWidth ,(j + 1) * mapHeight / gridDepth);
+			float BACKLEFT = (backleftcol.r + backleftcol.g + backleftcol.b) / 3;
+			float BACKRIGHT = (backrightcol.r + backrightcol.g + backrightcol.b) / 3;
+			float FRONTLEFT = (frontleftcol.r + frontleftcol.g + frontleftcol.b) / 3;
+			float FRONTRIGHT = (frontrightcol.r + frontrightcol.g + frontrightcol.b) / 3;
 			/*
 			back   +-----+	looking from above, the grid is made up of regular squares
 			       |tri1/|	'left & 'right' are the x cooded of the edges of the square
@@ -121,30 +130,30 @@ void Terrain::Init(){
 			     left   right
 				 */
 			//tri1
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
-			setPoint(vertices[vertexNum++],left,getHeight(left,front),front);
+		
+			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
 
+			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(vertices[vertexNum++],right,getHeight2(FRONTRIGHT),front);
 
-
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
-			setPoint(vertices[vertexNum++],right,getHeight(right,front),front);
-
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
-			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
+			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
 
 			//declare a degenerate triangle
 			//TODO: fix this to draw the correct triangle
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
-			setPoint(vertices[vertexNum++],left,getHeight(left,front),front);
+			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
 
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
-			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
+			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
-			setPoint(vertices[vertexNum++],left,getHeight(left,back),back);
+			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(vertices[vertexNum++],left,getHeight2(BACKLEFT),back);
 			
-
+			//float average = (leftcol.r + leftcol.g + leftcol.b) / 3;
+			//cout << " R " <<leftcol.r << " G " << leftcol.g << " B " << leftcol.b <<  " Average : " << average << endl;
 			
 
 

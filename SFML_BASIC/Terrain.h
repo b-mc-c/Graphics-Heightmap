@@ -14,6 +14,7 @@ class Terrain
 	vector *colors;
 
 	float getHeight(float x, float y);
+	float getHeight2(float y);
 	void setPoint(vector, float, float,float);
 
 	sf::Image m_heightmap;

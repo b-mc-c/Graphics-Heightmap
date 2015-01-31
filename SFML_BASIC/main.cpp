@@ -110,7 +110,7 @@ int main()
 		//TODO:probably should remove this in final
 		static float ang=0.0;
 		ang+=0.01f;
-		//glRotatef(ang*2,0,1,0);//spin about y-axis
+		glRotatef(ang*2,0,1,0);//spin about y-axis
 		
 
 		

@@ -3,6 +3,11 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "stdafx.h"
+#include <iostream>
+
+using namespace std;
+
 
 
 class Camera{
@@ -14,9 +19,9 @@ public:
 	aiVector3D sideways;
  
     float forwardSpeed;
-    float roationSpeed;
+    float rotationSpeed;
      
-    Camera():forwardSpeed(0.5f),roationSpeed(0.1f){}
+    Camera():forwardSpeed(0.5f),rotationSpeed(0.1f){}
  
     void Init(aiVector3D& p=zero, aiVector3D& f=zaxis, aiVector3D& u=yaxis, aiVector3D& s=xaxis){
         position=p;
@@ -77,18 +82,19 @@ public:
     }
  
     void TurnRightLeft(int dir){ //Dir=+1=>Right, dir=-1=> Left
-        //TODO
-		
+        //TODO fix this
+		forward.x -= rotationSpeed*dir;
+		//cout << forward.x << endl;
     }
          
     void TurnUpDown(int dir){ //Dir=+1=>Up, dir=-1=> Down
-        //TODO
-
+        //TODO this is not the right way
+		forward.y += rotationSpeed*dir;
     }
  
     void ViewingTransform(){
-        gluLookAt(	position.x,position.y,position.z,// camera position
-					position.x + forward.x, position.y + forward.y,position.z + forward.z, //look at this point //TODO: BUG here!! what is it ??
+       gluLookAt(	position.x,position.y,position.z,// camera position
+					position.x + forward.x, position.y + forward.y,position.z + forward.z, //look at this point
 					0,1,0); //camera up
     }
  

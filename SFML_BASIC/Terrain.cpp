@@ -121,28 +121,25 @@ void Terrain::Init(){
 			     left   right
 				 */
 			//tri1
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
+			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
 			setPoint(vertices[vertexNum++],left,getHeight(left,front),front);
 
+			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(vertices[vertexNum++],left,getHeight(left,back),back);
+
+			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
 
 
+			//Tri2
 			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],right,getHeight(right,front),front);
 
 			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
-			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
-
-
-			//declare a degenerate triangle
-			//TODO: fix this to draw the correct triangle
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],left,getHeight(left,front),front);
 
 			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
-
-			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
-			setPoint(vertices[vertexNum++],left,getHeight(left,back),back);
 			
 
 			

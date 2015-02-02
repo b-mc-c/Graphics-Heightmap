@@ -23,7 +23,7 @@ public:
         forward=f;
         up=u;
 		sideways=s;
-         
+        
     }
  
 	void Update(sf::Event e){//respond to keyboard events

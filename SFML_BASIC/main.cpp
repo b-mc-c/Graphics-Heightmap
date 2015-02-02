@@ -45,7 +45,7 @@ int main()
       
     //prepare OpenGL surface for HSR 
     glClearDepth(1.f); 
-    glClearColor(0.3f, 0.3f, 0.6f, 0.f); //background colour
+    glClearColor(0.4f, 0.2f, 0.1f, 0.f); //background colour
     glEnable(GL_DEPTH_TEST); 
     glDepthMask(GL_TRUE); 
    
@@ -102,9 +102,16 @@ int main()
 		glMatrixMode(GL_MODELVIEW); 
         glLoadIdentity(); 
 
+		////	The first line clears the depth buffer
+		//glClearDepth(1);
+		////The second line enables depth testing
+		//glEnable(GL_DEPTH_TEST);
+		////Next we need to enable the OpenGL lighting support.
+		////To do this simply call the line:
+		//glEnable(GL_LIGHTING);
+
 		//get the viewing transform from the camera
 		camera.ViewingTransform();
-
 
 		//make the world spin
 		//TODO:probably should remove this in final

@@ -43,10 +43,7 @@ Terrain::Terrain(void)
 	//num squares in grid will be width*height, two triangles per square
 	//3 verts per triangle
 	 numVerts=gridDepth*gridWidth*2*3;
-
-
 }
-
 
 Terrain::~Terrain(void)
 {
@@ -61,7 +58,6 @@ float lerp(float start, float end, float t){
 
 
 void Terrain::setPoint(vector v,float x, float y, float z){
-
 		v[0]=x;
 		v[1]=y;
 		v[2]=z;
@@ -96,7 +92,6 @@ void Terrain::Init(){
 		cout << "image not loaded " << endl;
 	}
 	
-	
 	//interpolate along the edges to generate interior points
 	for(int i=0;i<gridWidth-1;i++){ //iterate left to right
 		for(int j=0;j<gridDepth-1;j++){//iterate front to back
@@ -124,14 +119,11 @@ void Terrain::Init(){
 			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],left,getHeight(left,front),front);
 
-
-
 			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],right,getHeight(right,front),front);
 
 			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],right,getHeight(right,back),back);
-
 
 			//declare a degenerate triangle
 			//TODO: fix this to draw the correct triangle
@@ -143,22 +135,11 @@ void Terrain::Init(){
 
 			setPoint(colors[vertexNum],leftcol.r,leftcol.g,leftcol.b);
 			setPoint(vertices[vertexNum++],left,getHeight(left,back),back);
-			
-
-			
-
-
 		}
 	}
-
-
-
-
 }
 
-
 void Terrain::Draw(){
-
 	glBegin(GL_TRIANGLES);
 	for(int i =0;i<numVerts;i++){
 			glColor3fv(colors[i]);

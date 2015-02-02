@@ -44,7 +44,7 @@ Terrain::Terrain(void)
 	//3 verts per triangle
 	 numVerts=gridDepth*gridWidth*2*3;
 
-
+	 wireMap = false;
 }
 
 
@@ -94,9 +94,25 @@ void Terrain::Init(){
 	vertices=new vector[numVerts];
 	delete [] colors;
 	colors=new vector[numVerts];
-	if (!m_heightmap.loadFromFile("heightmap.png"))
+	if (!m_heightmap.loadFromFile("map2.png"))
 	{
-		cout << "image not loaded " << endl;
+		cout << "height did not load " << endl;
+	}
+	if (!water.loadFromFile("water.png"))
+	{
+		// error...
+		cout << "water did not load " << endl;
+	}
+	if (!grass.loadFromFile("grass.png"))
+	{
+    // error...
+		cout << "grass did not load  " << endl;
+	}
+	if (!snow.loadFromFile("snow.png"))
+	{
+    // error...
+		cout << "snow did not load " << endl;
+
 	}
 	
 
@@ -131,25 +147,25 @@ void Terrain::Init(){
 				 */
 			//tri1
 		
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(colors[vertexNum],0,FRONTLEFT,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
 
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(colors[vertexNum],0,FRONTRIGHT,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(FRONTRIGHT),front);
 
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(colors[vertexNum],0,BACKRIGHT,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
 
 			//declare a degenerate triangle
 			//TODO: fix this to draw the correct triangle
-			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(colors[vertexNum],0,FRONTLEFT,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
 
-			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(colors[vertexNum],0,BACKRIGHT,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
-			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(colors[vertexNum],0,BACKLEFT,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(BACKLEFT),back);
 			
 			//float average = (leftcol.r + leftcol.g + leftcol.b) / 3;
@@ -165,13 +181,30 @@ void Terrain::Init(){
 
 }
 
-
+bool Terrain::getWireMeash(){return wireMap;}
+void Terrain::setWireMesh(bool val){wireMap = val;}
 void Terrain::Draw(){
-
+	
+	
+	
+	if(wireMap)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 	glBegin(GL_TRIANGLES);
-	for(int i =0;i<numVerts;i++){
-			glColor3fv(colors[i]);
-			glVertex3fv(vertices[i]);
+	for(int i =0;i<numVerts;i++)
+	{
+		glColor3fv(colors[i]);
+		glVertex3fv(vertices[i]);
 	}
 	glEnd();
+
+	
+
+	
+	
 }

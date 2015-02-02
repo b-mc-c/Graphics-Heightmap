@@ -55,8 +55,6 @@ int main()
      
     //set up a 3D Perspective View volume
     gluPerspective(90.f, (float)width/height, 1.f, 300.0f);//fov, aspect, zNear, zFar 
- 
-
 
 
 	//load & bind the shader
@@ -85,14 +83,15 @@ int main()
             // Escape key : exit 
             if ((Event.type == sf::Event::KeyPressed) && (Event.key.code == sf::Keyboard::Escape)) 
                 App.close(); 
-             
+			if ((Event.type == sf::Event::KeyReleased) && (Event.key.code == sf::Keyboard::I)) 
+                 terrain.setWireMesh(!terrain.getWireMeash());
 			//update the camera
 			camera.Update(Event);
  
             
     
         } 
-           
+		
         //Prepare for drawing 
         // Clear color and depth buffer 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
@@ -110,7 +109,7 @@ int main()
 		//TODO:probably should remove this in final
 		static float ang=0.0;
 		ang+=0.01f;
-		glRotatef(ang*2,0,1,0);//spin about y-axis
+		//glRotatef(ang*2,0,1,0);//spin about y-axis
 		
 
 		
@@ -120,6 +119,7 @@ int main()
 		   
         // Finally, display rendered frame on screen 
         App.display(); 
+
     } 
    
     return EXIT_SUCCESS; 

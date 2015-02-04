@@ -109,16 +109,16 @@ void Terrain::Init(){
 		for(int j=0;j<gridDepth-1;j++){//iterate front to back
 			int sqNum=(j+i*gridDepth);
 			int vertexNum=sqNum*3*2; //6 vertices per square (2 tris)
-			float front=lerp(-terrDepth/2,terrDepth/2,(float)j/gridDepth);
-			float back =lerp(-terrDepth/2,terrDepth/2,(float)(j+1)/gridDepth);
-			float left=lerp(-terrWidth/2,terrWidth/2,(float)i/gridDepth);
-			float right=lerp(-terrDepth/2,terrDepth/2,(float)(i+1)/gridDepth);
+			float front= j+1;
+			float back = j;
+			float left= i;
+			float right= i + 1;
 			int mapWidth = m_heightmap.getSize().x;
 			int mapHeight = m_heightmap.getSize().y;
-			sf::Color frontleftcol  = m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j ) * mapHeight / gridDepth);
-			sf::Color frontrightcol = m_heightmap.getPixel((i +1 ) * mapWidth / gridWidth ,(j) * mapHeight / gridDepth);
-			sf::Color backleftcol= m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j + 1) * mapHeight / gridDepth);
-			sf::Color  backrightcol= m_heightmap.getPixel((i + 1 ) * mapWidth / gridWidth ,(j + 1) * mapHeight / gridDepth);
+			sf::Color frontleftcol  = m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j +1 ) * mapHeight / gridDepth);
+			sf::Color frontrightcol = m_heightmap.getPixel((i +1 ) * mapWidth / gridWidth ,(j +1) * mapHeight / gridDepth);
+			sf::Color backleftcol= m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j ) * mapHeight / gridDepth);
+			sf::Color  backrightcol= m_heightmap.getPixel((i + 1 ) * mapWidth / gridWidth ,(j) * mapHeight / gridDepth);
 			float BACKLEFT = (backleftcol.r + backleftcol.g + backleftcol.b) / 3;
 			float BACKRIGHT = (backrightcol.r + backrightcol.g + backrightcol.b) / 3;
 			float FRONTLEFT = (frontleftcol.r + frontleftcol.g + frontleftcol.b) / 3;
@@ -193,7 +193,7 @@ void Terrain::Draw(){
 	glBegin(GL_TRIANGLES);
 	for(int i =0;i<numVerts;i++)
 	{
-		//glTexCoord2d(texturemap[i][0],texturemap[i][1]);
+		glTexCoord2d(vertices[i][0] / gridWidth  ,vertices[i][2] / gridDepth);
 		glColor3fv(colors[i]);
 		glVertex3fv(vertices[i]);
 		

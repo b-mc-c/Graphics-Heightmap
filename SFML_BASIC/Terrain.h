@@ -12,6 +12,10 @@ class Terrain
 	//I know, very inefficient, but let's run before we walk
 	vector *vertices;
 	vector *colors;
+	vector *texturemap;
+
+	//std::vector<float> textureX;
+	//std::vector<float> textureY;
 
 	float getHeight(float x, float y);
 	float getHeight2(float y);
@@ -20,7 +24,8 @@ class Terrain
 	bool wireMap;
 
 	sf::Image m_heightmap;
-	sf::Texture grass , snow , water;
+	/*sf::Texture grass , snow , water;*/
+	
 	
 public:
 	Terrain(void);

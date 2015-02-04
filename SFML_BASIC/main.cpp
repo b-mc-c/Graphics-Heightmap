@@ -45,16 +45,35 @@ int main()
       
     //prepare OpenGL surface for HSR 
     glClearDepth(1.f); 
-    glClearColor(0.3f, 0.3f, 0.6f, 0.f); //background colour
+    glClearColor(0.5f, 0.5f, 0.5f, 0.f); //background colour
     glEnable(GL_DEPTH_TEST); 
     glDepthMask(GL_TRUE); 
    
     //// Setup a perspective projection & Camera position 
     glMatrixMode(GL_PROJECTION); 
+	
     glLoadIdentity(); 
      
     //set up a 3D Perspective View volume
     gluPerspective(90.f, (float)width/height, 1.f, 300.0f);//fov, aspect, zNear, zFar 
+
+	sf::Texture grass , snow , water;
+	if (!water.loadFromFile("water.png"))
+	{
+		// error...
+		cout << "water did not load " << endl;
+	}
+	if (!grass.loadFromFile("grass.png"))
+	{
+    // error...
+		cout << "grass did not load  " << endl;
+	}
+	if (!snow.loadFromFile("snow.png"))
+	{
+    // error...
+		cout << "snow did not load " << endl;
+
+	}
 
 
 	//load & bind the shader
@@ -62,7 +81,12 @@ int main()
 	//all the lighting & texture blending code should  be put in 'fragment.glsl'
 	if(!shader.loadFromFile("vertex.glsl","fragment.glsl")){
         exit(1);
-    }
+    }	
+	shader.setParameter("waterTexture",water);
+	shader.setParameter("grassTexture",grass);
+	shader.setParameter("snowTexture",snow);
+
+
 	sf::Shader::bind(&shader);
 
 	//Create our Terrain

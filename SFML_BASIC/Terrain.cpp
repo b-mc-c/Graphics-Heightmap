@@ -39,6 +39,7 @@ Terrain::Terrain(void)
 	terrDepth=50;
 	vertices=NULL;
 	colors=NULL;	
+	texturemap = NULL;
 	
 	//num squares in grid will be width*height, two triangles per square
 	//3 verts per triangle
@@ -52,6 +53,7 @@ Terrain::~Terrain(void)
 {
 	delete [] vertices;
 	delete [] colors;
+	delete [] texturemap;
 }
 
 //interpolate between two values
@@ -85,7 +87,7 @@ float  Terrain::getHeight(float x, float y){
 	return dist;
 }
 float  Terrain::getHeight2(float y){
-	return y / 20;
+	return y / 10;
 }
 
 void Terrain::Init(){
@@ -94,43 +96,29 @@ void Terrain::Init(){
 	vertices=new vector[numVerts];
 	delete [] colors;
 	colors=new vector[numVerts];
+	delete [] texturemap;
+	texturemap =new vector[numVerts];
+
 	if (!m_heightmap.loadFromFile("map2.png"))
 	{
 		cout << "height did not load " << endl;
 	}
-	if (!water.loadFromFile("water.png"))
-	{
-		// error...
-		cout << "water did not load " << endl;
-	}
-	if (!grass.loadFromFile("grass.png"))
-	{
-    // error...
-		cout << "grass did not load  " << endl;
-	}
-	if (!snow.loadFromFile("snow.png"))
-	{
-    // error...
-		cout << "snow did not load " << endl;
-
-	}
-	
 
 	//interpolate along the edges to generate interior points
 	for(int i=0;i<gridWidth-1;i++){ //iterate left to right
 		for(int j=0;j<gridDepth-1;j++){//iterate front to back
 			int sqNum=(j+i*gridDepth);
 			int vertexNum=sqNum*3*2; //6 vertices per square (2 tris)
-			float front=lerp(-terrDepth/2,terrDepth/2,(float)j/gridDepth);
-			float back =lerp(-terrDepth/2,terrDepth/2,(float)(j+1)/gridDepth);
-			float left=lerp(-terrWidth/2,terrWidth/2,(float)i/gridDepth);
-			float right=lerp(-terrDepth/2,terrDepth/2,(float)(i+1)/gridDepth);
+			float front= j+1;
+			float back = j;
+			float left= i;
+			float right= i + 1;
 			int mapWidth = m_heightmap.getSize().x;
 			int mapHeight = m_heightmap.getSize().y;
-			sf::Color frontleftcol  = m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j ) * mapHeight / gridDepth);
-			sf::Color frontrightcol = m_heightmap.getPixel((i +1 ) * mapWidth / gridWidth ,(j) * mapHeight / gridDepth);
-			sf::Color backleftcol= m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j + 1) * mapHeight / gridDepth);
-			sf::Color  backrightcol= m_heightmap.getPixel((i + 1 ) * mapWidth / gridWidth ,(j + 1) * mapHeight / gridDepth);
+			sf::Color frontleftcol  = m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j +1 ) * mapHeight / gridDepth);
+			sf::Color frontrightcol = m_heightmap.getPixel((i +1 ) * mapWidth / gridWidth ,(j +1) * mapHeight / gridDepth);
+			sf::Color backleftcol= m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j ) * mapHeight / gridDepth);
+			sf::Color  backrightcol= m_heightmap.getPixel((i + 1 ) * mapWidth / gridWidth ,(j) * mapHeight / gridDepth);
 			float BACKLEFT = (backleftcol.r + backleftcol.g + backleftcol.b) / 3;
 			float BACKRIGHT = (backrightcol.r + backrightcol.g + backrightcol.b) / 3;
 			float FRONTLEFT = (frontleftcol.r + frontleftcol.g + frontleftcol.b) / 3;
@@ -147,25 +135,32 @@ void Terrain::Init(){
 				 */
 			//tri1
 		
-			setPoint(colors[vertexNum],0,FRONTLEFT,0);
+			setPoint(colors[vertexNum],FRONTLEFT,0,0);
+			setPoint(texturemap[vertexNum],0, 1,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
 
-			setPoint(colors[vertexNum],0,FRONTRIGHT,0);
+			
+			setPoint(colors[vertexNum],FRONTRIGHT,0,0);
+			setPoint(texturemap[vertexNum],1, 1,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(FRONTRIGHT),front);
 
-			setPoint(colors[vertexNum],0,BACKRIGHT,0);
+			setPoint(colors[vertexNum],BACKRIGHT,0,0);
+			setPoint(texturemap[vertexNum],1, 0,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
 
 			//declare a degenerate triangle
 			//TODO: fix this to draw the correct triangle
-			setPoint(colors[vertexNum],0,FRONTLEFT,0);
+			setPoint(colors[vertexNum],0,0,FRONTLEFT);
+			setPoint(texturemap[vertexNum],0, 1,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
 
-			setPoint(colors[vertexNum],0,BACKRIGHT,0);
+			setPoint(colors[vertexNum],0,0,BACKRIGHT);
+			setPoint(texturemap[vertexNum],1, 0,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
-			setPoint(colors[vertexNum],0,BACKLEFT,0);
+			setPoint(colors[vertexNum],0,0,BACKLEFT);
+			setPoint(texturemap[vertexNum],0, 0,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(BACKLEFT),back);
 			
 			//float average = (leftcol.r + leftcol.g + leftcol.b) / 3;
@@ -198,8 +193,11 @@ void Terrain::Draw(){
 	glBegin(GL_TRIANGLES);
 	for(int i =0;i<numVerts;i++)
 	{
+		glTexCoord2d(vertices[i][0] / gridWidth  ,vertices[i][2] / gridDepth);
 		glColor3fv(colors[i]);
 		glVertex3fv(vertices[i]);
+		
+ 
 	}
 	glEnd();
 

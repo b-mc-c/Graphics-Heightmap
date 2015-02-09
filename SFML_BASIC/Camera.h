@@ -11,93 +11,111 @@ using namespace std;
 
 
 class Camera{
-    static aiVector3D zero,yaxis,zaxis,xaxis;
+	static aiVector3D zero,yaxis,zaxis,xaxis;
 public:
-    aiVector3D position;
-    aiVector3D forward;
-    aiVector3D up;
+	aiVector3D position;
+	aiVector3D forward;
+	aiVector3D up;
 	aiVector3D sideways;
- 
-    float forwardSpeed;
-    float rotationSpeed;
-     
-    Camera():forwardSpeed(0.5f),rotationSpeed(0.1f){}
- 
-    void Init(aiVector3D& p=zero, aiVector3D& f=zaxis, aiVector3D& u=yaxis, aiVector3D& s=xaxis){
-        position=p;
-        forward=f;
-        up=u;
+
+	//float angleYaw;
+	//float anglePitch;
+
+	float forwardSpeed;
+	float rotationSpeed;
+
+	Camera():forwardSpeed(200.0f),rotationSpeed(10.0f){}//,angleYaw(0.0f),anglePitch(0.0f){}
+
+	void Init(aiVector3D& p=zero, aiVector3D& f=zaxis, aiVector3D& u=yaxis, aiVector3D& s=xaxis){
+		position=p;
+		forward = f;
+		up= u;
 		sideways=s;
-         
-    }
- 
-	void Update(sf::Event e){//respond to keyboard events
-		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::D)){
-                MoveLeftRight(+1);
-            }
 
-			if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::A)){
-                MoveLeftRight(-1);
-            }
- 
-            if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::W)){
-                MoveForwardBack(1);
-            }
-            if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::S)){
-                MoveForwardBack(-1);
-            }
-
-			if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Q)){
-                MoveUpDown(1);
-            }
-            if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::E)){
-                MoveUpDown(-1);
-            }
- 
-            if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Right)){
-                TurnRightLeft(1);
-            }
-            if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Left)){
-                TurnRightLeft(-1);
-            }
-            if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Up)){
-               TurnUpDown(1);
-            }
-            if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Down)){
-                TurnUpDown(-1);
- 
-            }
-	
 	}
-    void MoveLeftRight(int dir){ //Dir=+1=>Right, dir=-1=> Left
-		position-=(sideways*(forwardSpeed*dir));
-    }
 
-	void MoveUpDown(int dir){ //Dir=+1=>Right, dir=-1=> Left
-		position-=(up*(forwardSpeed*dir));
-    }
- 
-    void MoveForwardBack(int dir){ //Dir=+1=>Forward, dir=-1=> Back
-        position+=(forward*(forwardSpeed*dir));
-    }
- 
-    void TurnRightLeft(int dir){ //Dir=+1=>Right, dir=-1=> Left
-        //TODO fix this
-		forward.x -= rotationSpeed*dir;
-		//cout << forward.x << endl;
-    }
-         
-    void TurnUpDown(int dir){ //Dir=+1=>Up, dir=-1=> Down
-        //TODO this is not the right way
-		forward.y += rotationSpeed*dir;
-    }
- 
-    void ViewingTransform(){
-       gluLookAt(	position.x,position.y,position.z,// camera position
-					position.x + forward.x, position.y + forward.y,position.z + forward.z, //look at this point
-					0,1,0); //camera up
-    }
- 
+	void Update(sf::Event e, float deltaTime){//respond to keyboard events
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::D)){
+			MoveLeftRight(+1, deltaTime);
+		}
+
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::A)){
+			MoveLeftRight(-1, deltaTime);
+		}
+
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::W)){
+			MoveForwardBack(1, deltaTime);
+		}
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::S)){
+			MoveForwardBack(-1, deltaTime);
+		}
+
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Q)){
+			MoveUpDown(1, deltaTime);
+		}
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::E)){
+			MoveUpDown(-1, deltaTime);
+		}
+
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Right)){
+			TurnRightLeft(1, deltaTime);
+		}
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Left)){
+			TurnRightLeft(-1, deltaTime);
+		}
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Up)){
+			TurnUpDown(1, deltaTime);
+		}
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Down)){
+			TurnUpDown(-1, deltaTime);
+
+		}
+
+	}
+	void MoveLeftRight(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left
+		position+=(sideways*deltaTime*(forwardSpeed*dir));
+	}
+
+	void MoveUpDown(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left
+		position-=(up*deltaTime*(forwardSpeed*dir));
+	}
+
+	void MoveForwardBack(int dir, float deltaTime){ //Dir=+1=>Forward, dir=-1=> Back
+		position+=(forward*deltaTime*(forwardSpeed*dir));
+	}
+
+	void TurnRightLeft(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left
+		//TODO fix this
+		//forward.x -= rotationSpeed*deltaTime*dir;
+		//float theta = rotationSpeed;
+		//angleYaw += dir * rotationSpeed*deltaTime;
+		//forward = aiVector3D(cos(angleYaw), 0, sin(angleYaw));
+
+		float angle = rotationSpeed*-dir*deltaTime;
+		aiMatrix3x3 m; //create 3x3 matrix
+		m.Rotation(angle,up,m);
+		forward*=m;
+		sideways = forward^up;
+
+	}
+
+	void TurnUpDown(int dir, float deltaTime){ //Dir=+1=>Up, dir=-1=> Down
+		//TODO this is not the right way
+		//anglePitch -= dir * rotationSpeed*deltaTime;
+		//forward = aiVector3D(0,cos(anglePitch),sin(anglePitch));
+		float angle = rotationSpeed*dir*deltaTime;
+		aiMatrix3x3 m; //create 3x3 matrix
+		m.Rotation(angle,forward^up,m);
+		forward*=m;
+		sideways = forward^up;
+	}
+
+	void ViewingTransform(){
+		gluLookAt(	position.x,position.y,position.z,// camera position
+			position.x + forward.x, position.y + forward.y,position.z + forward.z, //look at this point
+			0,1,0); //camera up
+	}
+
 };
 
 //create some default vectors

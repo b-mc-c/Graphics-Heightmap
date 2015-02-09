@@ -37,7 +37,9 @@ int main()
     int width=600,height=600;
 	sf::RenderWindow App(sf::VideoMode(width, height, 32), "SFML OpenGL"); 
     // Create a clock for measuring time elapsed     
-    sf::Clock Clock; 
+    sf::Clock clock; 
+	float deltaTime = 0.0f;
+	sf::Time timeSinceLastUpdate;
 
 	aiVector3D position(0,10,-30);
 	Camera camera;
@@ -96,6 +98,10 @@ int main()
     // Start game loop 
     while (App.isOpen()) 
     { 
+
+		timeSinceLastUpdate = clock.getElapsedTime();
+		deltaTime = timeSinceLastUpdate.asSeconds();
+		clock.restart();
         // Process events 
         sf::Event Event; 
         while (App.pollEvent(Event)) 
@@ -110,7 +116,7 @@ int main()
 			if ((Event.type == sf::Event::KeyReleased) && (Event.key.code == sf::Keyboard::I)) 
                  terrain.setWireMesh(!terrain.getWireMeash());
 			//update the camera
-			camera.Update(Event);
+			camera.Update(Event, deltaTime);
  
             
     

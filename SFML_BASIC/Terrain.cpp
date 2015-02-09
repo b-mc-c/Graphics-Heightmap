@@ -48,7 +48,6 @@ Terrain::Terrain(void)
 	 wireMap = false;
 }
 
-
 Terrain::~Terrain(void)
 {
 	delete [] vertices;
@@ -61,9 +60,7 @@ float lerp(float start, float end, float t){
 	return start+(end-start)*t;
 }
 
-
 void Terrain::setPoint(vector v,float x, float y, float z){
-
 		v[0]=x;
 		v[1]=y;
 		v[2]=z;
@@ -139,7 +136,6 @@ void Terrain::Init(){
 			setPoint(colors[vertexNum],FRONTLEFT,0,0);
 			setPoint(texturemap[vertexNum],0, 1,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
-
 			
 			setPoint(colors[vertexNum],FRONTRIGHT,0,0);
 			setPoint(texturemap[vertexNum],1, 1,0);
@@ -148,7 +144,6 @@ void Terrain::Init(){
 			setPoint(colors[vertexNum],BACKRIGHT,0,0);
 			setPoint(texturemap[vertexNum],1, 0,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
-
 
 			//declare a degenerate triangle
 			//TODO: fix this to draw the correct triangle
@@ -166,23 +161,13 @@ void Terrain::Init(){
 			
 			//float average = (leftcol.r + leftcol.g + leftcol.b) / 3;
 			//cout << " R " <<leftcol.r << " G " << leftcol.g << " B " << leftcol.b <<  " Average : " << average << endl;
-			
-
-
 		}
 	}
-
-
-
-
 }
 
 bool Terrain::getWireMeash(){return wireMap;}
 void Terrain::setWireMesh(bool val){wireMap = val;}
 void Terrain::Draw(){
-	
-	
-	
 	if(wireMap)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -203,12 +188,6 @@ void Terrain::Draw(){
 		//	max = vertices[i][1];
 		//}
 		//cout << max<< endl;
- 
 	}
-	glEnd();
-
-	
-
-	
-	
+	glEnd();	
 }

@@ -2,6 +2,7 @@
 // Headers 
 //////////////////////////////////////////////////////////// 
 #include "stdafx.h" 
+
 #ifdef _DEBUG 
 #pragma comment(lib,"sfml-graphics-d.lib") 
 #pragma comment(lib,"sfml-audio-d.lib") 
@@ -17,24 +18,21 @@
 #endif 
 #pragma comment(lib,"opengl32.lib") 
 #pragma comment(lib,"glu32.lib") 
- 
-#include "SFML/Graphics.hpp" 
+
+#include "SFML/Graphics.hpp"
 #include "SFML/Graphics/Shader.hpp"
-#include "SFML/OpenGL.hpp" 
+#include "SFML/OpenGL.hpp"
 #include <iostream> 
-  
+#include <windows.h>
+#include <gl/gl.h>
  
 #include "Terrain.h"
 #include "Camera.h"
+#include "Light.h"
 
 
-
-
-int main() 
-{ 
-    // Create the main window 
-    
-    int width=600,height=600;
+int main() { 
+    int width=600, height=600;
 	sf::RenderWindow App(sf::VideoMode(width, height, 32), "SFML OpenGL"); 
     // Create a clock for measuring time elapsed     
     sf::Clock Clock; 
@@ -72,9 +70,7 @@ int main()
 	{
     // error...
 		cout << "snow did not load " << endl;
-
 	}
-
 
 	//load & bind the shader
 	sf::Shader shader;
@@ -86,7 +82,6 @@ int main()
 	shader.setParameter("grassTexture",grass);
 	shader.setParameter("snowTexture",snow);
 
-
 	sf::Shader::bind(&shader);
 
 	//Create our Terrain
@@ -96,6 +91,7 @@ int main()
     // Start game loop 
     while (App.isOpen()) 
     { 
+		lightInit();
         // Process events 
         sf::Event Event; 
         while (App.pollEvent(Event)) 
@@ -111,9 +107,6 @@ int main()
                  terrain.setWireMesh(!terrain.getWireMeash());
 			//update the camera
 			camera.Update(Event);
- 
-            
-    
         } 
 		
         //Prepare for drawing 
@@ -128,23 +121,17 @@ int main()
 		//get the viewing transform from the camera
 		camera.ViewingTransform();
 
-
 		//make the world spin
 		//TODO:probably should remove this in final
 		static float ang=0.0;
 		ang+=0.01f;
 		//glRotatef(ang*2,0,1,0);//spin about y-axis
 		
-
-		
 		//draw the world
 		terrain.Draw();
-
-		   
+ 
         // Finally, display rendered frame on screen 
         App.display(); 
-
     } 
-   
     return EXIT_SUCCESS; 
 }

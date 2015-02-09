@@ -37,7 +37,9 @@ int main()
     int width=600,height=600;
 	sf::RenderWindow App(sf::VideoMode(width, height, 32), "SFML OpenGL"); 
     // Create a clock for measuring time elapsed     
-    sf::Clock Clock; 
+    sf::Clock clock; 
+	float deltaTime = 0.0f;
+	sf::Time timeSinceLastUpdate;
 
 	aiVector3D position(0,10,-30);
 	Camera camera;
@@ -45,26 +47,48 @@ int main()
       
     //prepare OpenGL surface for HSR 
     glClearDepth(1.f); 
-    glClearColor(0.3f, 0.3f, 0.6f, 0.f); //background colour
+    glClearColor(0.5f, 0.5f, 0.5f, 0.f); //background colour
     glEnable(GL_DEPTH_TEST); 
     glDepthMask(GL_TRUE); 
    
     //// Setup a perspective projection & Camera position 
     glMatrixMode(GL_PROJECTION); 
+	
     glLoadIdentity(); 
      
     //set up a 3D Perspective View volume
     gluPerspective(90.f, (float)width/height, 1.f, 300.0f);//fov, aspect, zNear, zFar 
- 
 
+	sf::Texture grass , snow , water;
+	if (!water.loadFromFile("water.png"))
+	{
+		// error...
+		cout << "water did not load " << endl;
+	}
+	if (!grass.loadFromFile("grass1.jpg"))
+	{
+    // error...
+		cout << "grass did not load  " << endl;
+	}
+	if (!snow.loadFromFile("snow.png"))
+	{
+    // error...
+		cout << "snow did not load " << endl;
+
+	}
 
 
 	//load & bind the shader
 	sf::Shader shader;
 	//all the lighting & texture blending code should  be put in 'fragment.glsl'
 	if(!shader.loadFromFile("vertex.glsl","fragment.glsl")){
-        exit(1);
-    }
+     //   exit(1);
+    }	
+	shader.setParameter("waterTexture",water);
+	shader.setParameter("grassTexture",grass);
+	shader.setParameter("snowTexture",snow);
+
+
 	sf::Shader::bind(&shader);
 
 	//Create our Terrain
@@ -74,6 +98,10 @@ int main()
     // Start game loop 
     while (App.isOpen()) 
     { 
+
+		timeSinceLastUpdate = clock.getElapsedTime();
+		deltaTime = timeSinceLastUpdate.asSeconds();
+		clock.restart();
         // Process events 
         sf::Event Event; 
         while (App.pollEvent(Event)) 
@@ -85,14 +113,15 @@ int main()
             // Escape key : exit 
             if ((Event.type == sf::Event::KeyPressed) && (Event.key.code == sf::Keyboard::Escape)) 
                 App.close(); 
-             
+			if ((Event.type == sf::Event::KeyReleased) && (Event.key.code == sf::Keyboard::I)) 
+                 terrain.setWireMesh(!terrain.getWireMeash());
 			//update the camera
-			camera.Update(Event);
+			camera.Update(Event, deltaTime);
  
             
     
         } 
-           
+		
         //Prepare for drawing 
         // Clear color and depth buffer 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
@@ -110,7 +139,7 @@ int main()
 		//TODO:probably should remove this in final
 		static float ang=0.0;
 		ang+=0.01f;
-		glRotatef(ang*2,0,1,0);//spin about y-axis
+		//glRotatef(ang*2,0,1,0);//spin about y-axis
 		
 
 		
@@ -120,6 +149,7 @@ int main()
 		   
         // Finally, display rendered frame on screen 
         App.display(); 
+
     } 
    
     return EXIT_SUCCESS; 

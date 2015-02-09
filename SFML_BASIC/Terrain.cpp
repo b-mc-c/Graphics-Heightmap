@@ -39,12 +39,13 @@ Terrain::Terrain(void)
 	terrDepth=50;
 	vertices=NULL;
 	colors=NULL;	
+	texturemap = NULL;
 	
 	//num squares in grid will be width*height, two triangles per square
 	//3 verts per triangle
 	 numVerts=gridDepth*gridWidth*2*3;
 
-
+	 wireMap = false;
 }
 
 
@@ -52,6 +53,7 @@ Terrain::~Terrain(void)
 {
 	delete [] vertices;
 	delete [] colors;
+	delete [] texturemap;
 }
 
 //interpolate between two values
@@ -69,23 +71,24 @@ void Terrain::setPoint(vector v,float x, float y, float z){
 
 //helper function to calculate height of terrain at a given point in space
 //you will need to modify this significantly to pull height from a map
-float  Terrain::getHeight(float x, float y){
-
-	//for the sample we will calculate height based on distance form origin
-	float dist=sqrt(x*x+y*y);
-
-	//center will be the highest point
-	dist=30-dist;
-	//put a nice curve in it
-	dist*=dist;
-	dist*=dist;
-	//whoah, way to high, make it smaller
-	dist/=50000;
-
-	return dist;
-}
-float  Terrain::getHeight2(float y){
-	return y / 20;
+//float  Terrain::getHeight(float x, float y){
+//
+//	//for the sample we will calculate height based on distance form origin
+//	float dist=sqrt(x*x+y*y);
+//
+//	//center will be the highest point
+//	dist=30-dist;
+//	//put a nice curve in it
+//	dist*=dist;
+//	dist*=dist;
+//	//whoah, way to high, make it smaller
+//	dist/=50000;
+//
+//	return dist;
+//}
+float  Terrain::getHeight2(float y)
+{
+	return y / 7;
 }
 
 void Terrain::Init(){
@@ -94,27 +97,29 @@ void Terrain::Init(){
 	vertices=new vector[numVerts];
 	delete [] colors;
 	colors=new vector[numVerts];
-	if (!m_heightmap.loadFromFile("heightmap.png"))
+	delete [] texturemap;
+	texturemap =new vector[numVerts];
+
+	if (!m_heightmap.loadFromFile("map2.png"))
 	{
-		cout << "image not loaded " << endl;
+		cout << "height did not load " << endl;
 	}
-	
 
 	//interpolate along the edges to generate interior points
 	for(int i=0;i<gridWidth-1;i++){ //iterate left to right
 		for(int j=0;j<gridDepth-1;j++){//iterate front to back
 			int sqNum=(j+i*gridDepth);
 			int vertexNum=sqNum*3*2; //6 vertices per square (2 tris)
-			float front=lerp(-terrDepth/2,terrDepth/2,(float)j/gridDepth);
-			float back =lerp(-terrDepth/2,terrDepth/2,(float)(j+1)/gridDepth);
-			float left=lerp(-terrWidth/2,terrWidth/2,(float)i/gridDepth);
-			float right=lerp(-terrDepth/2,terrDepth/2,(float)(i+1)/gridDepth);
+			float front= j+1;
+			float back = j;
+			float left= i;
+			float right= i + 1;
 			int mapWidth = m_heightmap.getSize().x;
 			int mapHeight = m_heightmap.getSize().y;
-			sf::Color frontleftcol  = m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j ) * mapHeight / gridDepth);
-			sf::Color frontrightcol = m_heightmap.getPixel((i +1 ) * mapWidth / gridWidth ,(j) * mapHeight / gridDepth);
-			sf::Color backleftcol= m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j + 1) * mapHeight / gridDepth);
-			sf::Color  backrightcol= m_heightmap.getPixel((i + 1 ) * mapWidth / gridWidth ,(j + 1) * mapHeight / gridDepth);
+			sf::Color frontleftcol  = m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j +1 ) * mapHeight / gridDepth);
+			sf::Color frontrightcol = m_heightmap.getPixel((i +1 ) * mapWidth / gridWidth ,(j +1) * mapHeight / gridDepth);
+			sf::Color backleftcol= m_heightmap.getPixel((i ) * mapWidth / gridWidth ,(j ) * mapHeight / gridDepth);
+			sf::Color  backrightcol= m_heightmap.getPixel((i + 1 ) * mapWidth / gridWidth ,(j) * mapHeight / gridDepth);
 			float BACKLEFT = (backleftcol.r + backleftcol.g + backleftcol.b) / 3;
 			float BACKRIGHT = (backrightcol.r + backrightcol.g + backrightcol.b) / 3;
 			float FRONTLEFT = (frontleftcol.r + frontleftcol.g + frontleftcol.b) / 3;
@@ -131,25 +136,32 @@ void Terrain::Init(){
 				 */
 			//tri1
 		
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(colors[vertexNum],FRONTLEFT,0,0);
+			setPoint(texturemap[vertexNum],0, 1,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
 
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			
+			setPoint(colors[vertexNum],FRONTRIGHT,0,0);
+			setPoint(texturemap[vertexNum],1, 1,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(FRONTRIGHT),front);
 
-			setPoint(colors[vertexNum],(rand()%255)/255.0,(rand()%255)/255.0,(rand()%255)/255.0);
+			setPoint(colors[vertexNum],BACKRIGHT,0,0);
+			setPoint(texturemap[vertexNum],1, 0,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
 
 			//declare a degenerate triangle
 			//TODO: fix this to draw the correct triangle
-			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(colors[vertexNum],0,0,FRONTLEFT);
+			setPoint(texturemap[vertexNum],0, 1,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
 
-			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(colors[vertexNum],0,0,BACKRIGHT);
+			setPoint(texturemap[vertexNum],1, 0,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
-			setPoint(colors[vertexNum],backleftcol.r,backleftcol.g,backleftcol.b);
+			setPoint(colors[vertexNum],0,0,BACKLEFT);
+			setPoint(texturemap[vertexNum],0, 0,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(BACKLEFT),back);
 			
 			//float average = (leftcol.r + leftcol.g + leftcol.b) / 3;
@@ -165,13 +177,38 @@ void Terrain::Init(){
 
 }
 
-
+bool Terrain::getWireMeash(){return wireMap;}
+void Terrain::setWireMesh(bool val){wireMap = val;}
 void Terrain::Draw(){
-
+	
+	
+	
+	if(wireMap)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
 	glBegin(GL_TRIANGLES);
-	for(int i =0;i<numVerts;i++){
-			glColor3fv(colors[i]);
-			glVertex3fv(vertices[i]);
+	float max = 0;
+	for(int i =0;i<numVerts;i++)
+	{
+		glTexCoord2d(vertices[i][0] / gridWidth  ,vertices[i][2] / gridDepth);
+		glColor3fv(colors[i]);
+		glVertex3fv(vertices[i]);
+		//if (vertices[i][1] > max)
+		//{
+		//	max = vertices[i][1];
+		//}
+		//cout << max<< endl;
+ 
 	}
 	glEnd();
+
+	
+
+	
+	
 }

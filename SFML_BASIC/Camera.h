@@ -24,7 +24,7 @@ public:
 	float forwardSpeed;
 	float rotationSpeed;
 
-	Camera():forwardSpeed(200.0f),rotationSpeed(10.0f){}//,angleYaw(0.0f),anglePitch(0.0f){}
+	Camera():forwardSpeed(200.0f),rotationSpeed(20.0f){}//,angleYaw(0.0f),anglePitch(0.0f){}
 
 	void Init(aiVector3D& p=zero, aiVector3D& f=zaxis, aiVector3D& u=yaxis, aiVector3D& s=xaxis){
 		position=p;
@@ -73,7 +73,7 @@ public:
 
 	}
 	void MoveLeftRight(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left
-		position+=(sideways*deltaTime*(forwardSpeed*dir));
+		position-=(sideways*deltaTime*(forwardSpeed*dir));
 	}
 
 	void MoveUpDown(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left

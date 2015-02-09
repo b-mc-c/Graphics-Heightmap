@@ -33,8 +33,9 @@
 int main() 
 { 
     // Create the main window 
-    
-    int width=600,height=600;
+
+	int width=600,height=600;
+
 	sf::RenderWindow App(sf::VideoMode(width, height, 32), "SFML OpenGL"); 
     // Create a clock for measuring time elapsed     
     sf::Clock clock; 
@@ -52,12 +53,8 @@ int main()
     glDepthMask(GL_TRUE); 
    
     //// Setup a perspective projection & Camera position 
-    glMatrixMode(GL_PROJECTION); 
-	
+	glMatrixMode(GL_PROJECTION); 
     glLoadIdentity(); 
-     
-    //set up a 3D Perspective View volume
-    gluPerspective(90.f, (float)width/height, 1.f, 300.0f);//fov, aspect, zNear, zFar 
 
 	sf::Texture grass , snow , water;
 	if (!water.loadFromFile("water.png"))
@@ -129,7 +126,9 @@ int main()
         // Apply some transformations 
         //initialise the worldview matrix
 		glMatrixMode(GL_MODELVIEW); 
-        glLoadIdentity(); 
+        glLoadIdentity();
+
+		camera.Projection();
 
 		//get the viewing transform from the camera
 		camera.ViewingTransform();

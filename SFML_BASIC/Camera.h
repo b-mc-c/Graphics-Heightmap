@@ -18,13 +18,18 @@ public:
 	aiVector3D up;
 	aiVector3D sideways;
 
+	const int width,height;
+
+	bool projectionType;
+
 	//float angleYaw;
 	//float anglePitch;
 
 	float forwardSpeed;
 	float rotationSpeed;
 
-	Camera():forwardSpeed(200.0f),rotationSpeed(10.0f){}//,angleYaw(0.0f),anglePitch(0.0f){}
+
+	Camera():forwardSpeed(200.0f),rotationSpeed(20.0f), projectionType(false), width(600), height(600){}//,angleYaw(0.0f),anglePitch(0.0f){}
 
 	void Init(aiVector3D& p=zero, aiVector3D& f=zaxis, aiVector3D& u=yaxis, aiVector3D& s=xaxis){
 		position=p;
@@ -68,12 +73,18 @@ public:
 		}
 		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::Down)){
 			TurnUpDown(-1, deltaTime);
-
 		}
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::O)){
+			projectionType = true;
+		}
+		if ((e.type == sf::Event::KeyPressed) && (e.key.code == sf::Keyboard::P)){
+			projectionType = false;
+		}
+
 
 	}
 	void MoveLeftRight(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left
-		position+=(sideways*deltaTime*(forwardSpeed*dir));
+		position-=(sideways*deltaTime*(forwardSpeed*dir));
 	}
 
 	void MoveUpDown(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left
@@ -105,9 +116,13 @@ public:
 		//forward = aiVector3D(0,cos(anglePitch),sin(anglePitch));
 		float angle = rotationSpeed*dir*deltaTime;
 		aiMatrix3x3 m; //create 3x3 matrix
-		m.Rotation(angle,forward^up,m);
-		forward*=m;
 		sideways = forward^up;
+		sideways.Normalize();
+		m.Rotation(angle,sideways,m);
+		forward*=m;
+		up*=m;
+		//up *=m;
+
 	}
 
 	void ViewingTransform(){
@@ -115,6 +130,17 @@ public:
 			position.x + forward.x, position.y + forward.y,position.z + forward.z, //look at this point
 			0,1,0); //camera up
 	}
+
+	void Projection(){
+		if(projectionType){
+			glOrtho(-100, 100, -100,100,1,100000);
+
+		}
+		else {
+			gluPerspective(90.f, (float)width/height, 1.f, 300.0f);//fov, aspect, zNear, zFar
+		}
+	}
+
 
 };
 

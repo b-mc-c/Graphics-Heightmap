@@ -1,9 +1,11 @@
+varying float height;
+
 void main()
 {
 
 	//gl_Position = gl_ProjectionMatrix * gl_ModelViewMatrix * gl_Vertex;
 
-
+	height =  gl_Vertex[1];
 	// transform the vertex position
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 

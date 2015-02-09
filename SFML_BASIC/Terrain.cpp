@@ -71,23 +71,24 @@ void Terrain::setPoint(vector v,float x, float y, float z){
 
 //helper function to calculate height of terrain at a given point in space
 //you will need to modify this significantly to pull height from a map
-float  Terrain::getHeight(float x, float y){
-
-	//for the sample we will calculate height based on distance form origin
-	float dist=sqrt(x*x+y*y);
-
-	//center will be the highest point
-	dist=30-dist;
-	//put a nice curve in it
-	dist*=dist;
-	dist*=dist;
-	//whoah, way to high, make it smaller
-	dist/=50000;
-
-	return dist;
-}
-float  Terrain::getHeight2(float y){
-	return y / 10;
+//float  Terrain::getHeight(float x, float y){
+//
+//	//for the sample we will calculate height based on distance form origin
+//	float dist=sqrt(x*x+y*y);
+//
+//	//center will be the highest point
+//	dist=30-dist;
+//	//put a nice curve in it
+//	dist*=dist;
+//	dist*=dist;
+//	//whoah, way to high, make it smaller
+//	dist/=50000;
+//
+//	return dist;
+//}
+float  Terrain::getHeight2(float y)
+{
+	return y / 7;
 }
 
 void Terrain::Init(){
@@ -191,12 +192,17 @@ void Terrain::Draw(){
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 	glBegin(GL_TRIANGLES);
+	float max = 0;
 	for(int i =0;i<numVerts;i++)
 	{
 		glTexCoord2d(vertices[i][0] / gridWidth  ,vertices[i][2] / gridDepth);
 		glColor3fv(colors[i]);
 		glVertex3fv(vertices[i]);
-		
+		//if (vertices[i][1] > max)
+		//{
+		//	max = vertices[i][1];
+		//}
+		//cout << max<< endl;
  
 	}
 	glEnd();

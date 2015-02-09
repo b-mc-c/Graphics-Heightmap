@@ -80,7 +80,7 @@ int main()
 	sf::Shader shader;
 	//all the lighting & texture blending code should  be put in 'fragment.glsl'
 	if(!shader.loadFromFile("vertex.glsl","fragment.glsl")){
-        exit(1);
+     //   exit(1);
     }	
 	shader.setParameter("waterTexture",water);
 	shader.setParameter("grassTexture",grass);

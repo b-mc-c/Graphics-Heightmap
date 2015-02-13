@@ -40,6 +40,7 @@ Terrain::Terrain(void)
 	vertices=NULL;
 	colors=NULL;	
 	texturemap = NULL;
+	normals = NULL;
 	
 	//num squares in grid will be width*height, two triangles per square
 	//3 verts per triangle
@@ -54,6 +55,7 @@ Terrain::~Terrain(void)
 	delete [] vertices;
 	delete [] colors;
 	delete [] texturemap;
+	delete [] normals;
 }
 
 //interpolate between two values
@@ -99,6 +101,8 @@ void Terrain::Init(){
 	colors=new vector[numVerts];
 	delete [] texturemap;
 	texturemap =new vector[numVerts];
+	delete [] normals;
+	normals =new vector[numVerts];
 
 	if (!m_heightmap.loadFromFile("map2.png"))
 	{
@@ -135,6 +139,8 @@ void Terrain::Init(){
 			     left   right
 				 */
 			//tri1
+			int tempVertNum = vertexNum;
+			
 		
 			setPoint(colors[vertexNum],FRONTLEFT,0,0);
 			setPoint(texturemap[vertexNum],0, 1,0);
@@ -149,7 +155,13 @@ void Terrain::Init(){
 			setPoint(texturemap[vertexNum],1, 0,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
 
-
+			
+			for(int i = tempVertNum; i < vertexNum; i++)
+            {
+				setNormal(normals[i],left,getHeight2(FRONTLEFT),front,right,getHeight2(FRONTRIGHT),front,right,getHeight2(BACKRIGHT),back);
+            }
+			tempVertNum = vertexNum;
+			//tempVertNum = vertexNum;
 			//declare a degenerate triangle
 			//TODO: fix this to draw the correct triangle
 			setPoint(colors[vertexNum],0,0,FRONTLEFT);
@@ -164,25 +176,69 @@ void Terrain::Init(){
 			setPoint(texturemap[vertexNum],0, 0,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(BACKLEFT),back);
 			
-			//float average = (leftcol.r + leftcol.g + leftcol.b) / 3;
-			//cout << " R " <<leftcol.r << " G " << leftcol.g << " B " << leftcol.b <<  " Average : " << average << endl;
+			//top left triangle
+			for(int i = tempVertNum; i < vertexNum; i++)
+			{
+			setNormal(normals[i],left,getHeight2(FRONTLEFT),front,right,getHeight2(BACKRIGHT),back,left,getHeight2(BACKLEFT),back);
+			}
 			
-
 
 		}
 	}
 
 
-
+		//create light source
+	GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat shininess[] = { 5.0 };
+    GLfloat light_position[] = {0, 50, 0, 1.0 };
+    glClearColor (0.0, 0.0, 0.0, 0.0);
+    glShadeModel (GL_SMOOTH);
+ 
+    glMaterialfv( GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+    glMaterialfv( GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+ 
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_DEPTH_TEST);
+    // enable color tracking
+    glEnable(GL_COLOR_MATERIAL);
+    // set material properties which will be assigned by glColor
+    glColorMaterial(GL_FRONT,GL_AMBIENT_AND_DIFFUSE);
 
 }
 
 bool Terrain::getWireMeash(){return wireMap;}
 void Terrain::setWireMesh(bool val){wireMap = val;}
+void Terrain::setNormal(vector nor, float p1x, float p1y, float p1z,float p2x, float p2y, float p2z,float p3x, float p3y, float p3z )
+{      
+        sf::Vector3f u;
+        sf::Vector3f v;
+        sf::Vector3f n;
+        sf::Vector3f p1( p1x,p1y,p1z); 
+        sf::Vector3f p2( p2x,p2y,p2z);
+        sf::Vector3f p3( p3x,p3y,p3z);
+       
+        u = p2 - p1;
+        v = p3 - p1;
+ 
+        n.x = (u.y * v.z) - (u.z * v.y);
+        n.y = (u.z * v.x) - (u.x * v.z);
+        n.z = (u.x * v.y) - (u.y * v.x);
+       
+        float length =  sqrt((n.x * n.x) + (n.y * n.y) + (n.z * n.z));
+       
+        nor[0] = n.x / length;
+        nor[1] = n.y / length;
+        nor[2] = n.z / length;
+}
+
 void Terrain::Draw(){
 	
 	
-	
+
+
+
 	if(wireMap)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -195,8 +251,10 @@ void Terrain::Draw(){
 	float max = 0;
 	for(int i =0;i<numVerts;i++)
 	{
+		//pass normals to open gl
+        glNormal3fv(normals[i]);
 		glTexCoord2d(vertices[i][0] / gridWidth  ,vertices[i][2] / gridDepth);
-		glColor3fv(colors[i]);
+		//glColor3fv(colors[i]);
 		glVertex3fv(vertices[i]);
 		//if (vertices[i][1] > max)
 		//{

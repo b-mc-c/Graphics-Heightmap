@@ -13,6 +13,7 @@ class Terrain
 	vector *vertices;
 	vector *colors;
 	vector *texturemap;
+	vector *normals;
 
 	//std::vector<float> textureX;
 	//std::vector<float> textureY;
@@ -33,6 +34,7 @@ public:
 	bool getWireMeash();
 	void setWireMesh(bool val);
 	void Init();
+	void setNormal(vector nor, float p1x, float p1y, float p1z,float p2x, float p2y, float p2z,float p3x, float p3y, float p3z );
 	void Draw();
 };
 

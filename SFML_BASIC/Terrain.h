@@ -21,8 +21,9 @@ class Terrain
 	float getHeight(float x, float y);
 	float getHeight2(float y);
 	void setPoint(vector, float, float,float);
-
+	
 	bool wireMap;
+	bool dNormals;
 
 	sf::Image m_heightmap;
 	/*sf::Texture grass , snow , water;*/
@@ -36,5 +37,7 @@ public:
 	void Init();
 	void setNormal(vector nor, float p1x, float p1y, float p1z,float p2x, float p2y, float p2z,float p3x, float p3y, float p3z );
 	void Draw();
+	void DrawNormals();
+	void changeDNormal();
 };
 

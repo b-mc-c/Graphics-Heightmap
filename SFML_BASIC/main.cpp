@@ -112,6 +112,8 @@ int main()
                 App.close(); 
 			if ((Event.type == sf::Event::KeyReleased) && (Event.key.code == sf::Keyboard::I)) 
                  terrain.setWireMesh(!terrain.getWireMeash());
+			if ((Event.type == sf::Event::KeyReleased) && (Event.key.code == sf::Keyboard::N)) 
+				terrain.changeDNormal();
 			//update the camera
 			camera.Update(Event, deltaTime);
  
@@ -136,8 +138,8 @@ int main()
 
 		//make the world spin
 		//TODO:probably should remove this in final
-		static float ang=0.0;
-		ang+=0.01f;
+		//static float ang=0.0;
+		//ang+=0.01f;
 		//glRotatef(ang*2,0,1,0);//spin about y-axis
 		
 

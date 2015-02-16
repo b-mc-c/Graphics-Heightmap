@@ -84,7 +84,7 @@ public:
 
 	}
 	void MoveLeftRight(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left
-		position-=(sideways*deltaTime*(forwardSpeed*dir));
+		position +=(sideways*deltaTime*(forwardSpeed*dir));
 	}
 
 	void MoveUpDown(int dir, float deltaTime){ //Dir=+1=>Right, dir=-1=> Left
@@ -121,6 +121,7 @@ public:
 		m.Rotation(angle,sideways,m);
 		forward*=m;
 		up*=m;
+		sideways = forward^up;
 		//up *=m;
 
 	}

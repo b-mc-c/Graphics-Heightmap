@@ -23,12 +23,10 @@
 #include "SFML/OpenGL.hpp" 
 #include <iostream> 
   
- 
+ #include "Light.h"
 #include "Terrain.h"
+
 #include "Camera.h"
-
-
-
 
 int main() 
 { 
@@ -44,6 +42,7 @@ int main()
 
 	aiVector3D position(0,10,-30);
 	Camera camera;
+	Light light;
     camera.Init(position); //create a camera
       
     //prepare OpenGL surface for HSR 
@@ -51,7 +50,7 @@ int main()
     glClearColor(0.5f, 0.5f, 0.5f, 0.f); //background colour
     glEnable(GL_DEPTH_TEST); 
     glDepthMask(GL_TRUE); 
-   
+	//light.lightInit();
     //// Setup a perspective projection & Camera position 
 	glMatrixMode(GL_PROJECTION); 
     glLoadIdentity(); 
@@ -79,12 +78,11 @@ int main()
 	sf::Shader shader;
 	//all the lighting & texture blending code should  be put in 'fragment.glsl'
 	if(!shader.loadFromFile("vertex.glsl","fragment.glsl")){
-     //   exit(1);
+        exit(1);
     }	
 	shader.setParameter("waterTexture",water);
 	shader.setParameter("grassTexture",grass);
 	shader.setParameter("snowTexture",snow);
-
 
 	sf::Shader::bind(&shader);
 
@@ -143,10 +141,11 @@ int main()
 		//glRotatef(ang*2,0,1,0);//spin about y-axis
 		
 
-		
+	
 		//draw the world
+		light.lightInit();
 		terrain.Draw();
-
+		
 		   
         // Finally, display rendered frame on screen 
         App.display(); 

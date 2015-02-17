@@ -55,7 +55,7 @@ void main()
 	vec4 pixel3 =  texture2D(snowTexture, gl_TexCoord[0].xy);
 
     // multiply it by the color
-    gl_FragColor = ((waterStrenght * pixel1) + (grassStrenght *pixel2) + (snowStrenght *pixel3)) * gl_Color ;// finalColor ;//;
+    gl_FragColor = ((waterStrenght * pixel1) + (grassStrenght *pixel2) + (snowStrenght *pixel3));// * gl_Color ;// finalColor ;//;
 	
 }
 

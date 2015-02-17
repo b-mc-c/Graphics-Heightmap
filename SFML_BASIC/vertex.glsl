@@ -1,10 +1,13 @@
 varying float height;
-
+varying vec3 N;
+varying vec3 v;  
 
 void main()
 { 
-		height =  gl_Vertex[1];
-     
+		height =  gl_Vertex.y;
+		v = vec3(gl_ModelViewMatrix * gl_Vertex);       
+		N = normalize(gl_NormalMatrix * gl_Normal);
+
 
 		// forward the vertex color
         gl_FrontColor = gl_Color; //pass the colour along to the next phase (fragment shader)

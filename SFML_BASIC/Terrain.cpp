@@ -49,7 +49,6 @@ Terrain::Terrain(void)
 	 wireMap = false;
 }
 
-
 Terrain::~Terrain(void)
 {
 	delete [] vertices;
@@ -62,7 +61,6 @@ Terrain::~Terrain(void)
 float lerp(float start, float end, float t){
 	return start+(end-start)*t;
 }
-
 
 void Terrain::setPoint(vector v,float x, float y, float z){
 
@@ -141,11 +139,9 @@ void Terrain::Init(){
 			//tri1
 			int tempVertNum = vertexNum;
 			
-		
 			setPoint(colors[vertexNum],1,1,1);
 			setPoint(texturemap[vertexNum],0, 1,0);
 			setPoint(vertices[vertexNum++],left,getHeight2(FRONTLEFT),front);
-
 			
 			setPoint(colors[vertexNum],1,1,1);
 			setPoint(texturemap[vertexNum],1, 1,0);
@@ -154,7 +150,6 @@ void Terrain::Init(){
 			setPoint(colors[vertexNum],1,1,1);
 			setPoint(texturemap[vertexNum],1, 0,0);
 			setPoint(vertices[vertexNum++],right,getHeight2(BACKRIGHT),back);
-
 			
 			for(int i = tempVertNum; i < vertexNum; i++)
             {
@@ -181,19 +176,15 @@ void Terrain::Init(){
 			{
 			setNormal(normals[i],left,getHeight2(FRONTLEFT),front,right,getHeight2(BACKRIGHT),back,left,getHeight2(BACKLEFT),back);
 			}
-			
-
 		}
 	}
-
-
-
-
 }
+
 void Terrain::changeDNormal()
 {
 	dNormals = !dNormals;
 }
+
 bool Terrain::getWireMeash(){return wireMap;}
 void Terrain::setWireMesh(bool val){wireMap = val;}
 void Terrain::setNormal(vector nor, float p1x, float p1y, float p1z,float p2x, float p2y, float p2z,float p3x, float p3y, float p3z )
@@ -220,9 +211,6 @@ void Terrain::setNormal(vector nor, float p1x, float p1y, float p1z,float p2x, f
 }
 
 void Terrain::Draw(){
-	
-
-
 	if(wireMap)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -231,24 +219,25 @@ void Terrain::Draw(){
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
+
+	
+
+
 	glBegin(GL_TRIANGLES);
 	float max = 0;
-	for(int i =0;i<numVerts;i++)
+	for(int i =0; i<numVerts; i++)
 	{
+		glNormal3fv(normals[i]);
 		glTexCoord2d(vertices[i][0] / gridWidth  ,vertices[i][2] / gridDepth);
 		glColor3fv(colors[i]);
 		glVertex3fv(vertices[i]);
 	}
 	glEnd();
 
-
 	if(dNormals)
 	{
 		DrawNormals();
 	}
-
-	
-	
 }
 void Terrain::DrawNormals()
 {
@@ -262,11 +251,7 @@ void Terrain::DrawNormals()
 	{
         glColor3fv(c);
 		glVertex3f(vertices[i][0] , vertices[i][1] , vertices[i][2] );
-		glVertex3f(vertices[i][0] + (normals[i][0] * lenght),vertices[i][1] + (normals[i][1]* lenght), vertices[i][2] + (normals[i][2]* lenght));
-
+		glVertex3f(vertices[i][0] + (normals[i][0] * lenght),vertices[i][1] + (normals[i][1]* lenght),vertices[i][2] + (normals[i][2]* lenght));
 	}
 	glEnd();
-
-	
-  
 }

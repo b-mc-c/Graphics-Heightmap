@@ -15,8 +15,8 @@ void main()
 	float snowStrenght = 0.0;// percentage of snow texture to be drawn
 	float scaleFactor = 36.4285;//scale relating to the height of the map ie 255 / 7
 	float strenght = 0.0;
-	vec4 finalColor = vec4(0.0, 0.0, 0.0, 0.0);
-	vec4 Ispec = vec4(0.0, 0.0, 0.0, 0.0);
+	vec4 finalColor = vec4(1.0, 1.0, 1.0, 1.0);
+	vec4 Ispec = vec4(1.0, 1.0, 1.0, 1.0);
 	vec4 Idiff;
 	vec4 diffuse;
 	vec3 position;
